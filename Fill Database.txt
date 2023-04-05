@@ -1,0 +1,55 @@
+USE BudgetDatabase;
+
+INSERT INTO user (user.Username, user.Email, user.UserPassword)
+VALUES ("OHTU2", "ohtu2@luukku.com", "ohtu2salasana");
+
+
+INSERT INTO category (category.CategoryName, category.UserID)
+VALUES ("Laskut", (SELECT user.UserID FROM user WHERE user.Username = 'OHTU2'));
+
+INSERT INTO account (account.AccountName, account.AccountType, account.Balance, account.BalanceDate, account.UserID)
+VALUES ("Käyttötili", "Checking", "500", CURRENT_DATE(), (SELECT user.UserID FROM user WHERE user.Username = 'OHTU2'));
+
+
+INSERT INTO subcategory (subcategory.SubCategoryName, subcategory.Balance, subcategory.UserID, subcategory.CategoryID)
+VALUES
+
+("Virkistys kulut", 500, (SELECT user.UserID FROM user WHERE user.Username = 'OHTU2'),
+(SELECT category.CategoryID FROM category WHERE category.CategoryName = 'Laskut')),
+
+("Viinakset", 5500, (SELECT user.UserID FROM user WHERE user.Username = 'OHTU2'),
+(SELECT category.CategoryID FROM category WHERE category.CategoryName = 'Laskut')
+);
+
+
+INSERT INTO transaction (transaction.TransactionName, transaction.TransactionDate, transaction.TransactionRepeat, transaction.Recipient,
+transaction.Outflow, transaction.Memo, transaction.AccountID, transaction.SubCategoryID)
+VALUES ("Mökkireissu", '2023-05-05', "Monthly", "Kolin luxus Mökit", 700, "Porealtaassa on kiva löhötellä",
+(SELECT user.UserID FROM user WHERE user.Username = 'OHTU2'),
+(SELECT subcategory.SubCategoryID FROM subcategory WHERE subcategory.SubCategoryName = 'Virkistys kulut'));
+
+
+INSERT INTO transaction (transaction.TransactionName, transaction.TransactionDate, transaction.TransactionRepeat, transaction.Recipient,
+transaction.Outflow, transaction.Memo, transaction.AccountID, transaction.SubCategoryID)
+VALUES ("Mökki herkut", '2023-05-05', "Monthly", "S-market", 200, "Nam",
+(SELECT user.UserID FROM user WHERE user.Username = 'OHTU2'),
+(SELECT subcategory.SubCategoryID FROM subcategory WHERE subcategory.SubCategoryName = 'Virkistys kulut'));
+
+
+INSERT INTO budget (budget.Amount, budget.BudgetDate, budget.FromCategory, budget.ToCategory)
+VALUES (100, CURRENT_DATE(), 'Virkistyskulut', 'Viinakset');
+
+INSERT INTO mergebsc(mergebsc.BudgetID, mergebsc.FromSubCategoryID, mergebsc.ToSubCategoryID)
+VALUES (1,1,2);
+
+INSERT INTO budget (budget.Amount, budget.BudgetDate, budget.FromCategory, budget.ToCategory)
+VALUES (150, CURRENT_DATE(), 'Viinakset', 'Virkistyskulut');
+
+INSERT INTO mergebsc(mergebsc.BudgetID, mergebsc.FromSubCategoryID, mergebsc.ToSubCategoryID)
+VALUES (2,2,1);
+
+INSERT INTO budget (budget.Amount, budget.BudgetDate, budget.FromCategory, budget.ToCategory)
+VALUES (50, CURRENT_DATE(), 'Viinakset', 'Virkistyskulut');
+
+INSERT INTO mergebsc(mergebsc.BudgetID, mergebsc.FromSubCategoryID, mergebsc.ToSubCategoryID)
+VALUES (3,2,1);
