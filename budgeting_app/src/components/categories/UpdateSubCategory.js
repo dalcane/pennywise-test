@@ -195,7 +195,6 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
   const getUserGoals = () => {
     const userID = localStorage.getItem('UserID');
     const baseUrl = `http://localhost:3001/goal/${userID}/get-goal-amounts`;
-    console.log(budgetGoalType, budgetGoalDate, budgetGoal, selectedSubCategory, userID);
     Axios.get(baseUrl).then((response) => {
       for (let x = 0; x < response.data.length; x++) {
         const budgetGoal = response.data[x].Amount;

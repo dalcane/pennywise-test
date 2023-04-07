@@ -12,8 +12,9 @@ import {IconButton, InputAdornment, Select} from "@mui/material";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
 import MenuItem from "@mui/material/MenuItem";
 import {useEffect} from "react";
-import UserSettings from "./UserSettings";
+import UserProfile from "./UserProfile";
 import styled from '@emotion/styled';
+
 
 const Login = ({loggedIn, setLoggedIn, setIsSidebarOpen, setEffectOpen, setMessage}) => {
     const [open, setOpen] = React.useState(false);
@@ -69,7 +70,8 @@ const Login = ({loggedIn, setLoggedIn, setIsSidebarOpen, setEffectOpen, setMessa
             alert(response.response.data)
         })
     };
-    const handleLogout = () => {
+
+ const handleLogout = () => {
         setLoggedIn(false);
         localStorage.removeItem("UserID");
         localStorage.removeItem("Username");
@@ -152,7 +154,7 @@ const Login = ({loggedIn, setLoggedIn, setIsSidebarOpen, setEffectOpen, setMessa
                     className='login-select' variant="outlined" value={show} onChange={(event) => setShow(event.target.value)}
                         inputProps={{IconComponent: () => null }} >
                     <MenuItem value={show} style={{display: 'none'}}>{show}</MenuItem>
-                    <UserSettings setMessage={setMessage} setEffectOpen={setEffectOpen}></UserSettings>
+                    <UserProfile setMessage={setMessage} setEffectOpen={setEffectOpen} handleLogout={handleLogout}></UserProfile>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Select>
                 :

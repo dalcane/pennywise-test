@@ -33,7 +33,8 @@ router.get('/:id/subcategory-name', async (req, res) => {
  */
 router.get('/:id/subcategory-name-and-balance', async (req, res) => {
   try {
-    const sqlQuery = `SELECT subcategory.SubCategoryName, subcategory.Balance FROM subcategory WHERE UserID=? AND subcategory.IsActive = 1`;
+    const sqlQuery = `SELECT subcategory.SubCategoryName, subcategory.Balance FROM subcategory WHERE UserID=? AND subcategory.IsActive = 1 
+AND subcategory.SubCategoryName != 'Account Transfer';`;
     const rows = await pool.query(sqlQuery, req.params.id);
     res.status(200).json(rows);
   } catch (error) {

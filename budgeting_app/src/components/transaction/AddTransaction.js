@@ -180,6 +180,30 @@ const AddTransaction = ({setaddTransactionSuccess, setMessage, setEffectOpen}) =
               setRecipient(event.target.value);
             }}
           />
+          
+          <div className="transaction-selects">
+            <div className="transaction-payee">
+              <InputLabel id="account">Payee *</InputLabel>
+              <Select
+                style={{ height: "50px", width: "550px" }}
+                id="account-name"
+                labelId="account"
+                fullWidth
+                required
+                onOpen={getUserAccounts}
+                value={account}
+                onChange={(event) => {
+                  setAccount(event.target.value);
+                }}
+              >
+                {accountsList.map((account) => (
+                  <MenuItem key={account.value} value={account.value}>
+                    {account.value}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+            </div>
           <TextField
             autoFocus
             margin="dense"
