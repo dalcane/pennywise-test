@@ -41,8 +41,8 @@ body {
     (flex-shrink and flex-basis) are optional. The default is 0 1 auto */
     background-color: #15171c;
     padding: 10px 10px 10px 0 !important;
-    width: 250px;
-    height: 100vh;
+    width: 260px;
+    overflow: auto !important;
     display: flex;
     justify-content: center;
 }
@@ -82,20 +82,6 @@ Account balances
     display: none;
 }
 
-.MuiCollapse-root,
-.MuiDataGrid-root {
-    display: flex;
-    /*background-color: #3a3434;*/
-    /*color: white !important;*/
-}
-
-.MuiTableCell-root {
-    /*background-color: #3a3434;
-    border-color: #3a3434 !important;*/
-    padding: 0 0.5rem 0 0.5rem !important;
-    color: #000000 !important;
-    border-bottom: none !important;
-}
 
 
 /* To be done...
@@ -171,16 +157,32 @@ Account balances
     border: 1px solid #d380ff; */
 }
 
+
+.MuiCollapse-root,
+.MuiDataGrid-root {
+    display: flex;
+}
+
+.MuiTableCell-root {
+    /*background-color: #3a3434;
+    border-color: #3a3434 !important;*/
+    padding: 0 0.7rem 0 0.5rem !important;
+    color: #000000 !important;
+    border-bottom: none !important;
+}
+
 .budgetingRow {
     display: flex;
     flex-flow: row wrap;
     align-items: flex-start;
     justify-content: space-between;
     font-weight: 500 !important;
-    font-size: 0.8125rem !important;
+    font-size: 13px !important;
     line-height: 1.75 !important;
     letter-spacing: 0.02857em !important;
     text-transform: uppercase !important;
+    min-height: 39.75px !important;
+    padding: 4px 4px 0px 4px;
 }
 
 .categoryRow {
@@ -250,6 +252,26 @@ div > #bank-button-1 {
     width: 25%;
 }
 
+.sideBarAccountDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.sideBarAccountName{
+    display: flex;
+    align-content: flex-start;
+}
+.sideBarAccountBalance{
+    display: flex;
+    padding-top: 0px;
+    padding-right: 5px;
+    text-align: end;
+    margin-left: auto;
+    margin-right: 0px;
+}
+
 .delete-button {
     /* margin-left: auto !important;*/
     margin-right: 0 !important;
@@ -283,6 +305,7 @@ div > #bank-button-1 {
 
 .AddTransaction {
     line-height: 22.75px;
+    font-size: 13px !important;
     padding: 4px 5px 4px 5px;
 }
 
@@ -367,20 +390,39 @@ css-1d3z3hw-MuiOutlinedInput-notchedOutline{
 .BudgetSubCategoryHeaderCell {
     background-color: #3a3434;
     color: #ffffff !important;
+    padding-right: 15px !important;
     width: 100px;
     max-width: 150px;
+    min-width: 90px;
 }
+.BudgetCatHeaderCellAcitivity {
+    background-color: #3a3434;
+    color: #ffffff !important;
+    padding-right: 10px !important;
+    width: 100px;
+    max-width: 150px;
+    min-width: 90px;
+}
+
+
 
 .BudgetSubCategoryCell,
 .BudgetSubCategoryCellActivity{
     background-color: #3a3434;
     color: #ffffff;
     width: 100px;
-    max-width: 150px;
+    max-width: 100px;
 
 }
 
+#root > div.row > div.column.middle > div >
+div.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.MuiTableContainer-root.css-11xur9t-MuiPaper-root-MuiTableContainer-root >
+table > tbody > tr:nth-child(4) > td > div > div > div > div > table > tbody > tr:nth-child(2) > td.MuiTableCell-root.MuiTableCell-body.MuiTableCell-alignLeft.MuiTableCell-sizeSmall.BudgetSubCategoryCell.css-cbyouk-MuiTableCell-root{
+    padding-left: 0.65em !important;
+}
+
 .BudgetSubCategoryCell span {
+    font-size: 14px !important;
     border-radius: 0.5em;
     color: white;
     padding-right: 0.25em;
@@ -393,20 +435,22 @@ css-1d3z3hw-MuiOutlinedInput-notchedOutline{
     float: right;
     align-items: center;
     justify-content: center;
-    font-size: medium;
+    font-size: 6px !important;
 }
-
+.BudgetHeaderCell,
 .BudgetHeaderCell2,
 .BudgetCatHeaderCell2 {
     background-color: #3a3434;
     color: #ffffff !important;
-    width: 100px;
+    width: 120px;
+    height: 39.5px;
     max-width: 150px;
-    padding-right: 16px !important;
+    padding-right: 10px !important;
 }
 
 .BudgetHeaderCell,
 .BudgetCatHeaderCell,
+.BudgetCatHeaderCellAcitivity,
 .BudgetSubCategoryHeaderCell,
 .BudgetSubCategoryCell,
 .BudgetHeaderCell2,
@@ -417,15 +461,43 @@ css-1d3z3hw-MuiOutlinedInput-notchedOutline{
     color: black !important;
     border-bottom: none;
 }
+.BudgetCatHeaderCellAcitivity{
+
+}
+
+.BudgetHeaderCell,
+.BudgetHeaderCell2{
+    background-color: #cfcfcf;
+    font-weight: bold !important;
+}
 
 .BudgetCatHeaderCell,
+.BudgetCatHeaderCellAcitivity,
 .BudgetCatHeaderCell2{
     background-color: #f6f6f6;
     font-weight: bold !important;
 }
 
+.BudgetHeaderCell2,
+.BudgetCatHeaderCell2 {
+    padding-right: 16px !important;
+    /* font-size: 16px !important; */
+}
+.BudgetSubCategoryCell2{
+    font-size: 13px !important;
+}
+
+.MuiTableHead-root{
+    background-color: #f6f6f6 !important;
+}
+
 .BudgetSubCategoryCellActivity{
     padding-right: 0.23rem !important;
+}
+
+/* Datagrid header row */
+#root > div.row > div.column.middle > div > div > div > div.MuiDataGrid-main.css-204u17-MuiDataGrid-main > div.MuiDataGrid-columnHeaders.css-z8fhq1-MuiDataGrid-columnHeaders {
+    background-color: #cfcfcf !important;
 }
 
 .goalIconClass{
@@ -454,4 +526,9 @@ css-1d3z3hw-MuiOutlinedInput-notchedOutline{
 
 .css-1e86fgl-MuiFormControl-root-MuiTextField-root input {
     color: #fff !important;
+}
+
+/* Datagrid footer with pages and how many to show */
+.css-17jjc08-MuiDataGrid-footerContainer{
+    justify-content: center !important;
 }

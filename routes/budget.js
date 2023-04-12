@@ -29,6 +29,73 @@ WHERE subcategory.UserID=?`;
 });
 
 /**
+ * Get budgeted amount for goal type 2
+ */
+router.get('/user-:UserID/get-budgeted-sum-type-2/subcategory-:SubCategoryName', async (req, res) => {
+  try {
+    const userID = req.params.UserID
+    const subCategoryName = req.params.SubCategoryName;
+
+    const budgetedTo = `SELECT SUM(budget.Amount) As 'Budgeted' 
+from subcategory 
+INNER JOIN mergebsc ON subcategory.SubCategoryID = mergebsc.ToSubCategoryID 
+INNER JOIN budget ON mergebsc.BudgetID = budget.BudgetID 
+INNER JOIN user ON subcategory.UserID = user.UserID 
+INNER JOIN goal ON subcategory.SubCategoryID = goal.SubCategoryID 
+WHERE user.UserID = '${userID}' AND subcategory.SubcategoryName = '${subCategoryName}' AND goal.GoalDate > budget.BudgetDate;`
+    const budgetedToResult = await pool.query(budgetedTo);
+
+    const budgetedFrom = `SELECT SUM(budget.Amount) As 'Budgeted' 
+from subcategory 
+INNER JOIN mergebsc ON subcategory.SubCategoryID = mergebsc.FromSubCategoryID 
+INNER JOIN budget ON mergebsc.BudgetID = budget.BudgetID 
+INNER JOIN user ON subcategory.UserID = user.UserID 
+INNER JOIN goal ON subcategory.SubCategoryID = goal.SubCategoryID 
+WHERE user.UserID = '${userID}' AND subcategory.SubcategoryName = '${subCategoryName}' AND goal.GoalDate > budget.BudgetDate;`
+    const budgetedFromResult = await pool.query(budgetedFrom);
+
+    const result = budgetedToResult[0].Budgeted - budgetedFromResult[0].Budgeted
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).send('Something went wrong, please try again');
+  }
+});
+
+/**
+ * Get budgeted amount for goal type 3
+ */
+router.get('/user-:UserID/get-budgeted-sum-type-3/subcategory-:SubCategoryName', async (req, res) => {
+  try {
+    const userID = req.params.UserID
+    const subCategoryName = req.params.SubCategoryName;
+
+    const budgetedTo = `SELECT SUM(budget.Amount) As 'Budgeted' 
+from subcategory 
+INNER JOIN mergebsc ON subcategory.SubCategoryID = mergebsc.ToSubCategoryID 
+INNER JOIN budget ON mergebsc.BudgetID = budget.BudgetID 
+INNER JOIN user ON subcategory.UserID = user.UserID 
+INNER JOIN goal ON subcategory.SubCategoryID = goal.SubCategoryID 
+WHERE user.UserID = '${userID}' AND subcategory.SubcategoryName = '${subCategoryName}';`
+    const budgetedToResult = await pool.query(budgetedTo);
+
+    const budgetedFrom = `SELECT SUM(budget.Amount) As 'Budgeted' 
+from subcategory 
+INNER JOIN mergebsc ON subcategory.SubCategoryID = mergebsc.FromSubCategoryID 
+INNER JOIN budget ON mergebsc.BudgetID = budget.BudgetID 
+INNER JOIN user ON subcategory.UserID = user.UserID 
+INNER JOIN goal ON subcategory.SubCategoryID = goal.SubCategoryID 
+WHERE user.UserID = '${userID}' AND subcategory.SubcategoryName = '${subCategoryName}';`
+    const budgetedFromResult = await pool.query(budgetedFrom);
+
+    const result = budgetedToResult[0].Budgeted - budgetedFromResult[0].Budgeted
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).send('Something went wrong, please try again');
+  }
+});
+
+
+/**
  * Add new budget (transfer money from x-category to y-category)
  */
 router.post('/new-budget', async (req, res) => {

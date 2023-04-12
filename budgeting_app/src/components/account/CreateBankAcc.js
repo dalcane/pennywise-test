@@ -60,15 +60,15 @@ const CreateBankAcc = ({setCreateAccSuccess, setMessage, setEffectOpen}) => {
 
   return (
     <div className="bank-button">
-      <Button id="bank-button-1" onClick={handleClickOpen}>
+      <Button id="bank-button-1" display="flex" justifycontent="space-between" onClick={handleClickOpen}>
         <Box mr={1}>
-          <AddCircleOutline />
+          <AddCircleOutline sx={{fontSize: "18px"}}/>
         </Box>
-        <Box mr={1}>
-        Add 
+        <Box mr={1} sx={{fontSize: "14px", textAlign: "right"}}>
+        Add
         </Box>
-        <Box mr={1}>
-        Account 
+        <Box mr={1} sx={{fontSize: "14px", textAlign: "right"}}>
+        Account
         </Box>
       </Button>
       <Dialog open={open} onClose={handleClose}>
@@ -86,7 +86,7 @@ const CreateBankAcc = ({setCreateAccSuccess, setMessage, setEffectOpen}) => {
             id="account-name"
             label="Account Name"
             fullWidth
-            inputProps={{maxLength: 30}}
+            inputProps={{maxLength: 20}}
             value={accountName}
             variant="filled"
             onChange={(event) => {

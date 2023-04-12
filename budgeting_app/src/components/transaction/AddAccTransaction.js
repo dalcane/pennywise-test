@@ -6,7 +6,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
-import { Select } from "@mui/material";
+import { Select, Switch, FormControlLabel, } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import Axios from "axios";
 import InputLabel from "@mui/material/InputLabel";
@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import * as React from "react";
+import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
 
 const AddAccTransaction = ({setAddAccTransactionSuccess, setMessage, setEffectOpen, AccountName}) => {
     const [open, setOpen] = useState(false);
@@ -27,6 +28,8 @@ const AddAccTransaction = ({setAddAccTransactionSuccess, setMessage, setEffectOp
     const [memo, setMemo] = useState("");
     const [subCategory, setSubCategory] = useState("");
     const [subCategoryList, setSubCategoryList] = useState([]);
+    const [payeeList, setPayeeList] = useState([]);
+    const [showGoal, setShowGoal] = useState(false);
 
     const handleChange = (newValue) => {
         setDate(newValue);
@@ -38,6 +41,22 @@ const AddAccTransaction = ({setAddAccTransactionSuccess, setMessage, setEffectOp
     const handleClose = () => {
         setOpen(false);
         setSubCategory("");
+    };
+
+    const getPayeeList = () => {
+        const userID = localStorage.getItem('UserID');
+        const baseUrl = `http://localhost:3001/transaction/user-${userID}/get-payee-list`;
+        const updatedArray = [];
+        return Axios.get(baseUrl).then((response) => {
+            for (let x = 0; x < response.data.length; x++) {
+                const payee = response.data[x].Payee;
+                updatedArray.push({value: payee});
+          }
+          setPayeeList([]);
+          setPayeeList(updatedArray);
+        }).catch((response) => {
+            alert(response.response.data);
+        });
     };
 
     const getUserSubcategories = () => {
@@ -98,7 +117,7 @@ const AddAccTransaction = ({setAddAccTransactionSuccess, setMessage, setEffectOp
 
     return (
         <div>
-            <Button onClick={handleClickOpen} className="AddTransaction"> Add transaction </Button>
+            <Button onClick={handleClickOpen} className="AddTransaction"> <AddCircleOutline sx={{fontSize: "18px", marginLeft: "-2px", marginRight: "8px"}}/> Add transaction </Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Add Transaction</DialogTitle>
                 <DialogContent>
@@ -148,18 +167,55 @@ const AddAccTransaction = ({setAddAccTransactionSuccess, setMessage, setEffectOp
                             setInflow(parseFloat(event.target.value));
                         }}
                     />
-                    <TextField
-                        required
-                        autoFocus
-                        margin="dense"
-                        id="payee"
-                        label="Payee"
-                        fullWidth
-                        variant="filled"
-                        onChange={(event) => {
-                            setRecipient(event.target.value);
-                        }}
-                    />
+                    <div className="transaction-selects">
+            <div className="transaction-payee">
+              <InputLabel id="account">Payee *</InputLabel>
+              <Select
+                style={{ height: "50px", width: "550px" }}
+                id="account-payee-list"
+                labelId="Payee"
+                fullWidth
+                required
+                onOpen={getPayeeList}
+                value={recipient}
+                onChange={(event) => {
+                  setRecipient(event.target.value);
+                }}
+              >
+                {payeeList.map((recipient) => (
+                  <MenuItem key={recipient.value} value={recipient.value}>
+                    {recipient.value}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+          </div>
+          <FormControlLabel control={<Switch default/>}
+                              label="Add a payee?"
+                            id="switch"
+                              value="true"
+                              onChange={() => setShowGoal(!showGoal)}/>
+
+            {showGoal && (
+                <div>
+
+
+                  <DialogContentText>
+                    Here you can type a payee.
+                  </DialogContentText>
+                  <TextField
+            required
+            autoFocus
+            margin="dense"
+            id="payee"
+            label="Payee"
+            fullWidth
+            variant="filled"
+            onChange={(event) => {
+              setRecipient(event.target.value);
+            }}
+          />
+                </div>)}
                     <TextField
                         required
                         autoFocus
@@ -231,7 +287,7 @@ const AddAccTransaction = ({setAddAccTransactionSuccess, setMessage, setEffectOp
                         Cancel
                     </Button>
                     <Button className="add-transaction" onClick={addTransaction}>
-                        Add Transaction
+                        Add new Transaction
                     </Button>
                 </DialogActions>
             </Dialog>

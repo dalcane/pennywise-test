@@ -53,7 +53,7 @@ WHERE user.UserID=? AND account.AccountName=?`;
 router.get('/user-:userID/get-payee-list', async (req, res) => {
   try{
     const userID = req.params.userID;
-    const sqlQuery = `SELECT transaction.Recipient AS 'Payee' FROM transaction 
+    const sqlQuery = `SELECT DISTINCT transaction.Recipient AS 'Payee' FROM transaction 
 WHERE transaction.AccountID IN (SELECT account.AccountID FROM account WHERE account.UserID = '${userID}') AND transaction.Recipient != '';`;
 
     const rows = await pool.query(sqlQuery, userID);

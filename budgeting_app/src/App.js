@@ -8,7 +8,7 @@ import {useEffect, useState} from 'react';
 import Account from "./pages/Account";
 import CustomAlert from "./utils/alert";
 import * as React from "react";
-
+const MemoizedSidebar = React.memo(Sidebar);
 const App = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [loggedIn, setLoggedIn] = useState(false);
@@ -46,13 +46,21 @@ const App = () => {
             </div>
             <div className="row">
                 <div className={`column left ${isSidebarOpen ? '' : 'hidden'}`}>
-                    <Sidebar loggedIn={loggedIn} createAccSuccess={createAccSuccess} setCreateAccSuccess={setCreateAccSuccess} setEffectOpen={setEffectOpen} setMessage={setMessage}/>
+                    <MemoizedSidebar loggedIn={loggedIn} createAccSuccess={createAccSuccess}
+                                     setCreateAccSuccess={setCreateAccSuccess} setEffectOpen={setEffectOpen} setMessage={setMessage}/>
                 </div>
                 <div className={`column middle ${loggedIn ? '' : 'hidden'}`}>
                     <Routes>
-                        <Route path="/dashboard" element={<Dashboard loggedIn={loggedIn} addDashboardSuccess={addDashboardSuccess} setAddDashboardSuccess={setAddDashboardSuccess} setEffectOpen={setEffectOpen} setMessage={setMessage}/>}/>
-                        <Route path="/accounts" element={<Accounts loggedIn={loggedIn} addTransactionSuccess={addTransactionSuccess} setaddTransactionSuccess={setaddTransactionSuccess} setEffectOpen={setEffectOpen} setMessage={setMessage}/>}/>
-                        <Route path={`/accounts/:AccountName`} element={<Account loggedIn={loggedIn} setEffectOpen={setEffectOpen} setMessage={setMessage} addAccTransactionSuccess={addAccTransactionSuccess} setAddAccTransactionSuccess={setAddAccTransactionSuccess}/>}/>
+                        <Route path="/dashboard" element={<Dashboard loggedIn={loggedIn} addDashboardSuccess={addDashboardSuccess}
+                                                                     setAddDashboardSuccess={setAddDashboardSuccess}
+                                                                     setEffectOpen={setEffectOpen} setMessage={setMessage}/>}/>
+                        <Route path="/accounts" element={<Accounts loggedIn={loggedIn} addTransactionSuccess={addTransactionSuccess}
+                                                                   setaddTransactionSuccess={setaddTransactionSuccess}
+                                                                   setEffectOpen={setEffectOpen} setMessage={setMessage}/>}/>
+                        <Route path={`/accounts/:AccountName`} element={<Account loggedIn={loggedIn} setEffectOpen={setEffectOpen}
+                                                                                 setMessage={setMessage}
+                                                                                 addAccTransactionSuccess={addAccTransactionSuccess}
+                                                                                 setAddAccTransactionSuccess={setAddAccTransactionSuccess}/>}/>
                     </Routes>
                 </div>
                 {/*<div className="column right">*/}

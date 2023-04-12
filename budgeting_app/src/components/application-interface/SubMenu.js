@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import styled from '@emotion/styled';
 
@@ -25,13 +25,12 @@ const SidebarLabel = styled.span`
 `;
 
 const SidebarBalance = styled.span`
-  margin-left: 16px;
-  margin-top: 40px;
-  font-size: 16px;
+  font-size: 15px;
   color: ${props => (props.negative ? 'indianred' : 'darkseagreen')};
 `;
 
-const DropdownLink = styled(Link)`
+
+const DropdownLinkSubMenu = styled(Link)`
   height: 60px;
   padding-left: 3rem;
   background: #15171c;
@@ -39,7 +38,7 @@ const DropdownLink = styled(Link)`
   text-decoration: none;
   align-items: center;
   color: #ffffff;
-  font-size: 18px;
+  font-size: 14px;
   border-left: 4px solid #15171c;
 
   &:hover {
@@ -49,9 +48,13 @@ const DropdownLink = styled(Link)`
   }
 `;
 
-const Submenu = ({item}) => {
+const Submenu = ({item, createAccSuccess}) => {
   const [subnav, setSubnav] = useState(false);
   const showSubnav = () => setSubnav(!subnav);
+
+    useEffect(() => {
+        setSubnav(false)
+    },[createAccSuccess])
 
   return (
       <>
@@ -72,12 +75,13 @@ const Submenu = ({item}) => {
         item.subNavi.map((subitem, index) => {
           const isNegative = subitem.balance < 0;
               return (
-                  <DropdownLink to={subitem.path} key={index}>
-                    <div>
+                  <DropdownLinkSubMenu to={subitem.path} key={index}>
+                    <div className="sideBarAccountDetails">
+                      <div className="sideBarAccountName">
                       {subitem.icon}
                       <SidebarLabel>{subitem.title}</SidebarLabel>
                     </div>
-                    <div>
+                    <div className="sideBarAccountBalance">
                       {subitem.balance && (
                           <SidebarBalance negative={isNegative}>
                             <div style={{display: 'flex'}}>
@@ -87,7 +91,8 @@ const Submenu = ({item}) => {
                           </SidebarBalance>
                       )}
                     </div>
-                  </DropdownLink>
+                    </div>
+                  </DropdownLinkSubMenu>
               );
             })}
       </>

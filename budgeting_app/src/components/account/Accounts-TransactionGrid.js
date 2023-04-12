@@ -113,7 +113,8 @@ export const AccountsTransactionGrid = ({rows, setRows, setaddTransactionSuccess
             Memo: selectedData[0].Memo,
             TransactionID: selectedData[0].id
         }).then(() => {
-            alert('edit success')
+            setMessage('Edit was successful')
+            setEffectOpen(true)
         }).catch(response => {
             alert(response.response.data)
         })
@@ -127,8 +128,9 @@ export const AccountsTransactionGrid = ({rows, setRows, setaddTransactionSuccess
             Axios.post(baseUrl, {
                 TransactionID: selectedData[0].id
             }).then(() => {
-                alert('delete success success')
                 setaddTransactionSuccess(true)
+                setMessage('Delete was successful')
+                setEffectOpen(true)
             }).catch(response => {
                 alert(response.response.data)
             })
@@ -136,43 +138,91 @@ export const AccountsTransactionGrid = ({rows, setRows, setaddTransactionSuccess
     };
 
     const columns = [
-        {field: 'TransactionDate', headerName: 'DATE', width: 150},
-        {field: 'AccountName', headerName: 'AccountName', width: 150},
-        {field: 'TransactionName', headerName: 'Transaction Name', width: 200, editable: true},
-        {field: 'Subcategory', headerName: 'Subcategory', width: 200},
-        {field: 'Outflow', headerName: 'Outflow', type: 'number', width: 100},
-        {field: 'Inflow', headerName: 'Inflow', type: 'number', width: 100},
-        {field: 'Recipient', headerName: 'Payee', width: 100, renderEditCell: renderSelectEditInputCell, editable: true},
-        {field: 'TransactionRepeat', headerName: 'Repeat', width: 100, renderEditCell: renderSelectEditInputCell, editable: true},
-        {field: 'Memo', headerName: 'Memo', width: 100, editable: true},
+        {field: 'TransactionDate',
+            headerClassName: 'transactionsHeader',
+            headerName: 'DATE',
+            width: 110},
+        {field: 'TransactionName',
+            headerClassName: 'transactionsHeader',
+            headerName: 'Transaction Name',
+            width: 200,
+            editable: true},
+        {field: 'AccountName',
+            headerClassName: 'transactionsHeader',
+            headerName: 'AccountName',
+            width: 150},
+        {field: 'Subcategory',
+            headerClassName: 'transactionsHeader',
+            headerName: 'Subcategory',
+            width: 200},
+        {field: 'Outflow',
+            headerClassName: 'transactionsHeader',
+            headerName: 'Outflow',
+            type: 'number',
+            minWidth: 100},
+        {field: 'Inflow',
+            headerClassName: 'transactionsHeader',
+            headerName: 'Inflow',
+            type: 'number',
+            minWidth: 100},
+        {field: 'Recipient',
+            headerClassName: 'transactionsHeader',
+            headerName: 'Payee',
+            minWidth: 100,
+            width:200,
+            renderEditCell: renderSelectEditInputCell,
+            editable: true},
+        {field: 'TransactionRepeat',
+            headerClassName: 'transactionsHeader',
+            headerName: 'Repeat',
+            width: 100, renderEditCell: renderSelectEditInputCell,
+            editable: true},
+        {field: 'Memo',
+            headerClassName: 'transactionsHeader',
+            headerName: 'Memo',
+            minWidth: 100,
+            editable: true},
         {
             field: 'actions',
+            headerClassName: 'transactionsHeader',
             type: 'actions',
             headerName: 'Actions',
             width: 100,
             cellClassName: 'actions',
             getActions: ({ id }) => {
-                    return [
-                        <GridActionsCellItem
-                            icon={<SaveIcon />}
-                            label="Save"
-                            onClick={handleSaveClick(id)}
-                        />,
-                        <GridActionsCellItem
-                            icon={<DeleteIcon />}
-                            label="Delete"
-                            onClick={handleDeleteClick(id)}
-                            color="inherit"
-                        />,
-                    ];
+                return [
+                    <GridActionsCellItem
+                        icon={<SaveIcon />}
+                        label="Save"
+                        onClick={handleSaveClick(id)}
+                    />,
+                    <GridActionsCellItem
+                        icon={<DeleteIcon />}
+                        label="Delete"
+                        onClick={handleDeleteClick(id)}
+                        color="inherit"
+                    />,
+                ];
             },
         },
     ];
 
     return(
-        <div style={{ width: '100%' }}>
+        <div style={{ width: '100%' }} >
             <DataGrid
+                sx={{
+                height: 300,
+                width: '100%',
+                    ' & .transactionsHeader': {
+                        fontWeight: "bold !important",
+                    },
+                    boxShadow: 2,
+                    ' & .MuiDataGrid-cell:hover': {
+                        color: '#A400FFFF',
+                    },
+                }}
                 experimentalFeatures={{ columnGrouping: true }}
+                density="compact"
                 autoHeight {...columns}
                 columns={columns}
                 rows={rows}

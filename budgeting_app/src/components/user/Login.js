@@ -13,7 +13,6 @@ import {Visibility, VisibilityOff} from "@mui/icons-material";
 import MenuItem from "@mui/material/MenuItem";
 import {useEffect} from "react";
 import UserProfile from "./UserProfile";
-import styled from '@emotion/styled';
 
 
 const Login = ({loggedIn, setLoggedIn, setIsSidebarOpen, setEffectOpen, setMessage}) => {
@@ -22,6 +21,12 @@ const Login = ({loggedIn, setLoggedIn, setIsSidebarOpen, setEffectOpen, setMessa
     const [password, setPassword] = React.useState('');
     const [show, setShow] = React.useState('Login');
     const [showPassword, setShowPassword] = React.useState(false);
+    const [noPassword, setNoPassword] = React.useState(false);
+    const [userNotFoundError, setUserNotFoundError] = React.useState(false);
+    const [passwordError, setPasswordError] = React.useState(false);
+    const [userNotActiveError, setUserNotActiveError] = React.useState(false);
+    const [passwordTouched, setPasswordTouched] = React.useState(false);
+    const [passwordEmpty, setPasswordEmpty] = React.useState(false);
 
     const handleClick = () => {
         setShowPassword(!showPassword);
@@ -37,8 +42,14 @@ const Login = ({loggedIn, setLoggedIn, setIsSidebarOpen, setEffectOpen, setMessa
         setOpen(false);
         setUsername('');
         setPassword('');
-
+        setUserNotFoundError(false);
+        setUserNotActiveError(false);
+        setPasswordError(false);
+        setPasswordTouched(false);
+        setPasswordEmpty(false);
     };
+
+
 
     useEffect(() => {
         if (loggedIn){
@@ -62,12 +73,41 @@ const Login = ({loggedIn, setLoggedIn, setIsSidebarOpen, setEffectOpen, setMessa
             setPassword('');
             setLoggedIn(true)
             setOpen(false);
+            setUserNotFoundError(false);
+            setUserNotActiveError(false);
+            setPasswordError(false);
+            setPasswordTouched(false);
+            setPasswordEmpty(false);
             localStorage.setItem("UserID", response.data.toString());
             localStorage.setItem("Username", username);
             setMessage(`Welcome ${username}`)
             setEffectOpen(true)
         })).catch((response) => {
-            alert(response.response.data)
+            switch (response.response.data) {
+                case "Wrong password":
+                    setUserNotActiveError(false);
+                    setUserNotFoundError(false);
+                    setPasswordError(true);
+                    break;
+                case "User not found, you must register first":
+                    setPasswordError(false);
+                    setUserNotActiveError(false);
+                    setUserNotFoundError(true);
+                    break;
+                case "User is not active":
+                    setPasswordError(false);
+                    setUserNotFoundError(false);
+                    setUserNotActiveError(true);
+                    break;
+            }
+            //if (alert(response.response.data) == "Wrong password") {
+            //    setPasswordError(true);
+            //} if (alert(response.response.data) == "User is not active") {
+            //    setUserNotActiveError(true);
+            //} if (alert(response.response.data) == "User not found, you must register first") {
+            //    setUserNotFoundError(true);
+            //}
+
         })
     };
 
@@ -200,11 +240,34 @@ const Login = ({loggedIn, setLoggedIn, setIsSidebarOpen, setEffectOpen, setMessa
                             ),
                         }}
                         variant="filled"
-                        onChange={(event) => {setPassword(event.target.value)}}
+                        onBlur={() => {
+                            if (!password) {
+                                setPasswordEmpty(true);
+                            } if (password) {
+                                setPasswordEmpty(false);
+                            }
+                        }}
+                        onChange={(event) => {
+                            setPasswordEmpty(false);
+                            setPasswordTouched(true);
+                            setPassword(event.target.value)
+                        }}
+                        error={passwordError || userNotFoundError || userNotActiveError || (passwordTouched && passwordEmpty)}
+                        helperText={
+                            passwordError
+                            ? "Password or username was incorrect."
+                            : userNotFoundError
+                            ? "User not found. Check your inputs or create a new account with Sign up -button."
+                            : userNotActiveError
+                            ? "User not active, contact administrator."
+                            : passwordTouched && passwordEmpty
+                            ? "Password is required."
+                            : ""
+                        }
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Register></Register>
+                    <Register setEffectOpen={setEffectOpen} setMessage={setMessage}></Register>
                     <Button onClick={handleClose} className="cancel-button">Cancel</Button>
                     <Button onClick={handleCloseAndLogin} className="login-button">Log in</Button>
                 </DialogActions>

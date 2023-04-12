@@ -34,12 +34,11 @@ const UpdateCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) => 
 
     const handleDelete = () => {
         const userID = localStorage.getItem('UserID');
-        const postUrl = 'http://localhost:3001/category/deactivate-category'; //Vaihtoon urli muuten pitäis möyhentää
+        const postUrl = 'http://localhost:3001/category/delete-category';
         Axios.post(postUrl, {
             CategoryName: selectedCategory,
             UserID: userID,
         }).then(() => {
-            alert('Delete was successful');
             setOpen(false);
             setCategory('');
             setBalance('');
@@ -52,32 +51,26 @@ const UpdateCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) => 
         });
     };
 
-    //TODO when backend is done should be easy to connect
     const handleEditCategory = () => {
         const userID = localStorage.getItem('UserID');
         const postUrl = 'http://localhost:3001/category/update-category';
-        const getUrl = `http://localhost:3001/category/user-${userID}/get-category-details/CategoryName-${selectedCategory}`;
-        Axios.get(getUrl).then((response) => {
-            setBalance(response.data[0].Balance);
-            Axios.post(postUrl, {
-                NewCategoryName: Category,
-                NewCategory: selectedCategory,
-                UserID: userID,
-                CategoryName: selectedCategory,
-            }).then(() => {
-                alert('Edit successful');
-                setOpen(false);
-                setCategory('');
-                setBalance('');
-                setSelectedCategory('');
-                setAddDashboardSuccess(true)
-                setMessage('Category was edited')
-                setEffectOpen(true)
-            });
+        Axios.post(postUrl, {
+            OldCategoryName: selectedCategory,
+            NewCategoryName: Category,
+            UserID: userID,
+        }).then(() => {
+            alert('Edit successful');
+            setOpen(false);
+            setCategory('');
+            setBalance('');
+            setSelectedCategory('');
+            setAddDashboardSuccess(true)
+            setMessage('Category was edited')
+            setEffectOpen(true)
         }).catch((response) => {
             alert(response.response.data);
         });
-    };
+    }
 
     const getUserCategories = () => {
         const userID = localStorage.getItem('UserID');
@@ -95,32 +88,15 @@ const UpdateCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) => 
             alert(response.response.data);
         });
     };
-    //TODO when backend is done should be easy to connect
-    const updateValues = () => {
-        const userID = localStorage.getItem('UserID');
-        const baseUrl = `http://localhost:3001/category/user-${userID}/get-category-details/CategoryName-${selectedCategory}`;
-        Axios.get(baseUrl).then((response) => {
-            setBalance(response.data[0].Balance);
-            setCategory(selectedCategory);
-        }).catch((response) => {
-            alert(response.response.data);
-        });
-    };
 
     useEffect(() => {
         getUserCategories();
     }, [open]);
 
-    useEffect(() => {
-        if (selectedCategory !== '') {
-            updateValues();
-        }
-    }, [selectedCategory]);
-
     return (
         <div className="subcategory-button">
-            <Button id="subcategory-button-1" onClick={handleClickOpen}>
-                <EditIcon/> Edit category
+            <Button id="subcategory-button-1" sx={{fontSize: "13px"}} onClick={handleClickOpen}>
+                <EditIcon sx={{fontSize: "18px", marginLeft: "-2px", marginRight: "8px"}}/> Edit category
             </Button>
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Edit category</DialogTitle>
@@ -168,20 +144,6 @@ const UpdateCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) => 
                         variant="filled"
                         onChange={(event) => {
                             setCategory(event.target.value);
-                        }}
-                    />
-                    <TextField
-                        autoFocus
-                        disabled
-                        margin="dense"
-                        id="balance"
-                        label="Balance"
-                        fullWidth
-                        inputProps={{maxLength: 20}}
-                        value={balance}
-                        variant="filled"
-                        onChange={(event) => {
-                            setBalance(event.target.value);
                         }}
                     />
                 </DialogContent>

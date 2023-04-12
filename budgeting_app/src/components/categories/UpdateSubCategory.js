@@ -36,6 +36,7 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
   const [budgetGoal, setBudgetGoal] = useState('0');
   const [budgetGoalType, setBudgetGoalType] = useState('1');
   const [budgetGoalDate, setBudgetGoalDate] = useState(new Date());
+  const [budgetGoalMonthlyAmount, setBudgetGoalMonthlyAmount] = useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -51,7 +52,16 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
     setBudgetGoal('0');
     setBudgetGoalType('1');
   };
-
+  
+  const calculateBudgetGoalMonthlyAmount = () => {
+    if (budgetGoalType === '2') {
+      const today = new Date();
+      const monthsLeft = (new Date(budgetGoalDate).getFullYear() - today.getFullYear()) * 12 + (new Date(budgetGoalDate).getMonth() - today.getMonth());
+      const monthlyAmount = Math.ceil(budgetGoal / monthsLeft);
+      setBudgetGoalMonthlyAmount(monthlyAmount);
+    }
+  }
+  
   const insertBudgetGoal = () => {
     if (!showGoal) {
       return;
@@ -65,12 +75,13 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
       SubCategoryName: selectedSubCategory,
       UserID: userID,
     }).then(() => {
-      alert('Budget addition successful');
       setShowGoal(false);
       setOpen(false);
       setBudgetGoalDate(new Date())
       setBudgetGoal('0');
       setBudgetGoalType('1');
+      setMessage('Budget addition successful')
+      setEffectOpen(true)
     }).catch((response) => {
       setShowGoal(false);
       alert(response.response.data);
@@ -107,7 +118,6 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
           UserID: userID,
           Type: 1
         }).then(() => {
-      alert('Delete was successful');
       setOpen(false);
       setsubCategory('');
       setBalance('');
@@ -135,7 +145,6 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
         UserID: userID,
         SubCategoryName: selectedSubCategory,
       }).then(() => {
-        alert('Edit successful');
         if (budgetGoalType !== '' && budgetGoal > 0) {
         insertBudgetGoal();
       }
@@ -148,6 +157,8 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
         setBudgetGoalType('1');
         setAddDashboardSuccess(true)
         setMessage('Subcategory was edited')
+        setEffectOpen(true)
+        setMessage('Edit subcategory was successful')
         setEffectOpen(true)
       });
     }).catch((response) => {
@@ -233,6 +244,11 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
   }, [open]);
 
   useEffect(() => {
+    calculateBudgetGoalMonthlyAmount();
+  }, [budgetGoalType, budgetGoalDate]);
+  
+
+  useEffect(() => {
     if (selectedSubCategory !== '') {
       updateValues();
     }
@@ -240,14 +256,14 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
 
   return (
       <div className="subcategory-button">
-        <Button id="subcategory-button-1" onClick={handleClickOpen}>
-          <EditIcon/> edit subcategory
+        <Button id="subcategory-button-1" sx={{fontSize: "13px"}} onClick={handleClickOpen}>
+          <EditIcon sx={{fontSize: "18px", marginLeft: "-2px", marginRight: "8px"}}/> edit subcategory & goal
         </Button>
         <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>Edit subcategory</DialogTitle>
+          <DialogTitle>Edit subcategory & goal</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              To edit a sub category, you need to select a
+              To edit a subcategory, you need to select a
               subcategory. You can
               change category or subcategory's
               name if it is needed. It is also possible to delete
@@ -329,6 +345,7 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
             />
 
             <FormControlLabel control={<Switch default/>}
+                              id="Switch"
                               label="Add a budget goal?"
                               value="true"
                               onChange={() => setShowGoal(!showGoal)}/>
@@ -354,11 +371,13 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
 
                     <FormControlLabel control={<Radio/>}
                                       label="Monthly Saving Goal"
+                                      id="ByMonth"
                                       value="1"/>
                     <FormControlLabel control={<Radio/>} label="Save by Date"
-                                      value="2"/>
-                    {budgetGoalType === '2' && (
-                        <div>
+                  value="2" />
+                {budgetGoalType === '2' && (
+                <div>
+                  
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
                                 label="Date"
@@ -374,19 +393,19 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
                           </LocalizationProvider>
                         </div>
 
-                    )}
+                )}
+                
                     <FormControlLabel control={<Radio/>}
                                       label="Target Balance"
-                                      value="3"/>
-
+                  value="3" />
                   </RadioGroup>
-
+                
 
                   <TextField
                 autoFocus
                 required
                       margin="dense"
-                      id="budgetGoal"
+                      id="ByDateGoal"
                       label="Budget goal amount"
                       fullWidth
                       inputProps={{maxLength: 20}}
@@ -397,7 +416,11 @@ const UpdateSubCategory = ({setAddDashboardSuccess, setMessage, setEffectOpen}) 
                       }}
                   />
 
-                </div>)}
+            </div>)}
+            {budgetGoalType === '2' && (
+  <p>To meet your goal, you need to budget {budgetGoalMonthlyAmount} € monthly.</p>
+)}
+
           </DialogContent>
           <DialogActions style={{justifyContent: "space-between"}}>
             <Button onClick={handleDelete} className="delete-button" style={{ color: "red", backgroundColor: "#ffebee" }}>

@@ -45,8 +45,8 @@ const AddCategory = ({setAddDashboardSuccess, setEffectOpen, setMessage}) => {
 
   return (
     <div className="category-button">
-      <Button id="category-button-1" onClick={handleClickOpen}>
-        <AddCircleOutline /> New Category
+      <Button id="category-button-1" sx={{fontSize: "13px"}} onClick={handleClickOpen}>
+        <AddCircleOutline sx={{fontSize: "18px", marginLeft: "-2px", marginRight: "8px"}}/> Add Category
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create a category</DialogTitle>

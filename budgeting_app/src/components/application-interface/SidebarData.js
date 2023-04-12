@@ -18,19 +18,29 @@ export const getUserAccounts = () => {
         let icon = null;
         switch (accountType) {
           case "Cash":
-            icon = <AttachMoneyIcon />;
+            icon = <AttachMoneyIcon     sx={{
+              fontSize: "22px"
+            }}/>;
             break;
           case "Checking":
-            icon = <AccountBalanceIcon />;
+            icon = <AccountBalanceIcon     sx={{
+              fontSize: "22px"
+            }}/>;
             break;
           case "Savings":
-            icon = <SavingsIcon />;
+            icon = <SavingsIcon     sx={{
+              fontSize: "22px"
+            }}/>;
             break;
           case "Credit Card":
-            icon = <CreditCardIcon />;
+            icon = <CreditCardIcon     sx={{
+              fontSize: "22px"
+            }}/>;
             break;
           case "Loan":
-            icon = <RequestQuoteIcon />;
+            icon = <RequestQuoteIcon     sx={{
+              fontSize: "22px"
+            }}/>;
             break;
           default:
             icon = null;

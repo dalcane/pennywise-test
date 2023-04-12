@@ -12,7 +12,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {useState} from 'react';
 import Axios from 'axios';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -22,7 +21,7 @@ const CollapsibleTable = ({rows}) => {
 
   const Row = (props) => {
     const {row} = props;
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(true);
 
     return (
         <React.Fragment>
@@ -43,15 +42,15 @@ const CollapsibleTable = ({rows}) => {
             <TableCell className="BudgetCatHeaderCell" align="right"
                        size="small"
                        width="10%">{row.totalBudgetedAmount.toFixed(
-                2)}</TableCell>
-            <TableCell className="BudgetCatHeaderCell" align="right"
+                2)} €</TableCell>
+            <TableCell className="BudgetCatHeaderCellAcitivity" align="right"
                        size="small"
                        width="10%">{row.totalActivityAmount.toFixed(
-                2)}</TableCell>
+                2)} €</TableCell>
             <TableCell className="BudgetCatHeaderCell2" align="right"
                        size="small"
                        width="10%">{row.totalAvailableAmount.toFixed(
-                2)}</TableCell>
+                2)} €</TableCell>
           </TableRow>
           <TableRow>
             <TableCell colSpan={6}>
@@ -65,7 +64,7 @@ const CollapsibleTable = ({rows}) => {
                       {row.subcategorySection.map((subcategoryRow, index) => (
                           <TableRow key={index}>
                             <TableCell className="BudgetSubCategoryCell"
-                                       align="left"></TableCell>
+                                       align="left" sx={{width: "102px"}}></TableCell>
                             <TableCell className="BudgetSubCategoryCell"
                                        component="th" scope="row" size="small">
                               {subcategoryRow.subcategoryName}
@@ -88,7 +87,7 @@ const CollapsibleTable = ({rows}) => {
                                     style={{
                                       backgroundColor: subcategoryRow.goalColor,
                                       fontWeight: 'bold',
-                                    }}>{subcategoryRow.availableAmount}  </span>
+                                    }}>{subcategoryRow.availableAmount}</span>
                                 </div>
                               </div>
                             </TableCell>
@@ -126,14 +125,13 @@ const CollapsibleTable = ({rows}) => {
           <TableHead>
             <TableRow>
               <TableCell align="left" className="BudgetHeaderCell"></TableCell>
-              <TableCell align="left" className="BudgetHeaderCell">All
-                categories</TableCell>
+              <TableCell align="left" className="BudgetHeaderCell">ALL CATEGORIES</TableCell>
               <TableCell align="right"
-                         className="BudgetHeaderCell">Budgeted</TableCell>
+                         className="BudgetHeaderCell">BUDGETED</TableCell>
               <TableCell align="right"
-                         className="BudgetHeaderCell">Activity</TableCell>
+                         className="BudgetHeaderCell">ACTIVITY</TableCell>
               <TableCell align="right"
-                         className="BudgetHeaderCell2">Available</TableCell>
+                         className="BudgetHeaderCell2">AVAILABLE</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -202,6 +200,8 @@ export const getGridData = async () => {
       let activityAmount = 0.00;
       let budgetedAmount = 0.00;
       let goalAmount = 0.00;
+      let goalType = 0;
+      let goalDate = 0;
       let color;
       let icon;
 
@@ -211,33 +211,83 @@ export const getGridData = async () => {
       }
       if (goalIndex !== -1) {
         goalAmount = parseFloat(goalsData[goalIndex].Amount) || 0.00;
+        goalType = parseInt(goalsData[goalIndex].GoalType);
+        goalDate = goalsData[goalIndex].GoalDate;
       }
 
-      // totalAvailable = parseFloat(totalAvailable.toFixed(2));
-      // totalBudgeted = parseFloat(totalBudgeted.toFixed(2));
-      // totalActivity = parseFloat(totalActivity.toFixed(2));
 
-      //goalType 1 here made (maybe?):
-      //note setting this to 0 in backend doesn't quite work yet so...
-      if (goalAmount === 0) {
-        //white
-        color = '#ffffff';
-        icon = <CheckCircleOutlineIcon/>;
-      }
-      if (budgetedAmount < goalAmount) {
-        //orange
-        color = '#fd8200';
-        icon = <ErrorOutlineIcon style={{fill: 'orange'}}/>;
-      }
-      if (budgetedAmount >= goalAmount) {
-        //green
-        color = '#099300';
-        icon = <CheckCircleOutlineIcon style={{fill: 'green'}}/>;
-      }
-      if (availableAmount < 0) {
-        //red
-        color = '#ca0000';
-        icon = <ErrorIcon style={{fill: 'red'}}/>;
+      //Goaltype switch-case
+      switch(goalType){
+        //subcategory doesn't have goal --> it's dark in dashboard
+        case 0:
+            color = '#000000';
+          break;
+
+        //type 1 - Monthly Saving Goal
+        case 1:
+          if (availableAmount < 0) {
+            //red
+            color = '#ca0000';
+            icon = <ErrorIcon style={{fill: '#ca0000', paddingBottom: "3px",
+              fontSize: "23px", marginLeft: "-2px", marginRight: "6px"}}/>;
+          }
+          else if (budgetedAmount < goalAmount) {
+            //orange
+            color = '#fd8200';
+            icon = <ErrorOutlineIcon style={{fill: 'orange',paddingBottom: "3px",
+              fontSize: "23px", marginLeft: "-2px", marginRight: "6px"}}/>;
+          }
+          else if (budgetedAmount >= goalAmount) {
+            //green
+            color = '#099300';
+            icon = <CheckCircleOutlineIcon style={{fill: 'green',paddingBottom: "3px",
+              fontSize: "23px", marginLeft: "-2px", marginRight: "6px"}}/>;
+          }
+          break;
+
+        //type 2 - Save by Date
+        case 2:
+          const getBudgetedSumType2 = `http://localhost:3001/budget/user-${userID}/get-budgeted-sum-type-2/subcategory-${subCategoryName}`;
+          const getBudgetedSumResultType2 = await Axios.get(getBudgetedSumType2);
+          const BudgetedSumType2 = getBudgetedSumResultType2.data;
+          const currentDate = new Date().toISOString();
+
+          if(BudgetedSumType2 >= goalAmount){
+            //green
+            color = '#099300';
+            icon = <CheckCircleOutlineIcon style={{fill: 'green',paddingBottom: "3px",
+              fontSize: "23px", marginLeft: "-2px", marginRight: "6px"}}/>;
+          }
+          else if(goalDate >= currentDate && BudgetedSumType2 < goalAmount){
+            //orange
+            color = '#fd8200';
+            icon = <ErrorOutlineIcon style={{fill: 'orange',paddingBottom: "3px",
+              fontSize: "23px", marginLeft: "-2px", marginRight: "6px"}}/>;
+          }
+          else if(goalDate < currentDate && BudgetedSumType2 < goalAmount){
+            //red
+            color = '#ca0000';
+            icon = <ErrorIcon style={{fill: '#ca0000', paddingBottom: "3px",
+              fontSize: "23px", marginLeft: "-2px", marginRight: "6px"}}/>;
+          }
+          break;
+
+        //type 3 - Target Balance
+        case 3:
+
+          if(availableAmount >= goalAmount){
+            //green
+            color = '#099300';
+            icon = <CheckCircleOutlineIcon style={{fill: 'green',paddingBottom: "3px",
+              fontSize: "23px", marginLeft: "-2px", marginRight: "6px"}}/>;
+          }
+          else{
+            //orange
+            color = '#fd8200';
+            icon = <ErrorOutlineIcon style={{fill: 'orange',paddingBottom: "3px",
+              fontSize: "23px", marginLeft: "-2px", marginRight: "6px"}}/>;
+          }
+          break;
       }
 
       totalAvailable += availableAmount;

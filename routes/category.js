@@ -61,11 +61,8 @@ router.get('/:id/return-category-dictionary/date-:date', async (req, res) => {
 IFNULL((SELECT sum(budget.amount) FROM budget WHERE budget.ToCategory = '${subCategories[y].SubCategoryName}' AND budget.BudgetDate > '${endDate}'),0) - 
 IFNULL((SELECT sum(budget.amount) FROM budget WHERE budget.FromCategory = '${subCategories[y].SubCategoryName}' AND budget.BudgetDate > '${endDate}'),0) AS 'Minus'`
 
-        console.log(sqlQueryDecreaseFutureBudget)
-
         const decreaseFutureBudgetData = await pool.query(sqlQueryDecreaseFutureBudget);
         let decreaseValue = decreaseFutureBudgetData[0].Minus || 0;
-        console.log(decreaseValue)
         let subcategoryBalance = parseFloat(subCategories[y].Balance - decreaseValue);
 
         subCategoriesList.push({
@@ -118,12 +115,20 @@ router.post('/new-category', async (req, res) => {
 router.post('/update-category', async (req, res) => {
   try {
     const {OldCategoryName, NewCategoryName, UserID} = req.body;
-    const sqlQuery = `UPDATE category SET category.CategoryName = '${NewCategoryName}'
- WHERE category.UserID = '${UserID}' AND category.CategoryName = '${OldCategoryName}'`;
-    await pool.query(sqlQuery);
 
-    res.status(200).
-        send(`Subcategory ${OldCategoryName} is now ${NewCategoryName}`);
+    const sqlQueryFindCategory = `SELECT category.CategoryName FROM category WHERE category.CategoryName=? AND category.UserID=?`;
+    const resultFindCategory = await pool.query(sqlQueryFindCategory,
+        [NewCategoryName, UserID]);
+
+    if (resultFindCategory.length === 0) {
+      const sqlQuery = `UPDATE category SET category.CategoryName = '${NewCategoryName}' 
+WHERE category.UserID = '${UserID}' AND category.CategoryName = '${OldCategoryName}'`;
+      await pool.query(sqlQuery);
+      res.status(200).send(`Subcategory ${OldCategoryName} is now ${NewCategoryName}`);
+    }
+    else {
+      res.status(409).json('Category name already exists');
+    }
 
   } catch (error) {
     res.status(400).send('Something went wrong, please try again');

@@ -25,11 +25,13 @@ const Sidebar = ({loggedIn, createAccSuccess, setCreateAccSuccess, setEffectOpen
         {
             title: "Accounts",
             path: "/accounts",
-            icon: <AccountBalanceIcon />,
+            icon: <AccountBalanceIcon/>,
+            iconClosed: <ExpandMoreIcon />,
+            iconOpen: <ExpandLessIcon />,
             subNavi: getUserAccounts(),
         },
         {
-            title: "AddAccount",
+            title: "",
             icon: <CreateBankAcc setCreateAccSuccess={setCreateAccSuccess} setEffectOpen={setEffectOpen} setMessage={setMessage}/>,
             path: "/accounts",
         },
@@ -45,7 +47,7 @@ const Sidebar = ({loggedIn, createAccSuccess, setCreateAccSuccess, setEffectOpen
   return (
       <SidebarWrap>
         {SidebarData.map((item, index) => {
-          return <Submenu item={item} key={index} />;
+          return <Submenu item={item} key={index} createAccSuccess={createAccSuccess}/>;
         })}
       </SidebarWrap>
   );

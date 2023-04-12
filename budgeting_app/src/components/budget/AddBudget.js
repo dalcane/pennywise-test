@@ -82,7 +82,7 @@ const AddBudget = ({setAddDashboardSuccess, setEffectOpen, setMessage}) => {
 
   return (
       <div>
-        <Button onClick={handleClickOpen}> <AddCircleOutline /> Budget </Button>
+        <Button onClick={handleClickOpen} sx={{fontSize: "13px"}}> <AddCircleOutline sx={{fontSize: "18px", marginLeft: "-2px", marginRight: "8px"}} /> Budget </Button>
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Budget</DialogTitle>
           <DialogContent>
