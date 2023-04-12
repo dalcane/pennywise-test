@@ -5,8 +5,7 @@ const PORT = process.env.LOCALPORT || 3001;
 const app = express();
 const cors = require('cors');
 app.use(cors());
-app.use(express.static('./budgeting_app/build'));
-
+app.use(express.static('./budgeting_app/build'))
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
